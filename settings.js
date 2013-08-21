@@ -6,7 +6,7 @@ drupalgap.settings = {};
  ***************/
  
 // Site Path
-drupalgap.settings.site_path = 'http://www.tylerfrankenstein.com'; // e.g. http://www.example.com
+drupalgap.settings.site_path = 'https://dev-miativity.gotpantheon.com/'; // e.g. http://www.example.com
 
 // Base Path
 drupalgap.settings.base_path = '/';
@@ -28,10 +28,10 @@ drupalgap.settings.clean_urls = false; // Setting to false is recommended.
 drupalgap.settings.title = 'DrupalGap';
  
 // App Front Page
-drupalgap.settings.front = 'dashboard';
+drupalgap.settings.front = 'home';
 
 // Theme
-drupalgap.settings.theme = 'easystreet3';
+drupalgap.settings.theme = 'miativity_theme';
 
 // Logo
 drupalgap.settings.logo = 'themes/easystreet3/images/drupalgap.jpg';
@@ -57,7 +57,7 @@ drupalgap.modules.contrib = [
 
 // Custom Modules - www/app/modules/custom
 drupalgap.modules.custom = [
-  /*{name:'example'},*/
+  {name:'miativity'},
 ];
 
 /****************************************|
@@ -65,10 +65,16 @@ drupalgap.modules.custom = [
  ****************************************/
 drupalgap.settings.blocks = {};
 
-// Easy Street 3 Theme Blocks
-drupalgap.settings.blocks.easystreet3 = {
+// Miativity Theme Blocks
+drupalgap.settings.blocks.miativity_theme = {
   header:{
-    header:{}
+    header:{},
+    slogan:{
+      pages:{
+        value:[''],
+        mode:'include'
+      }
+    }
   },
   navigation:{
     user_menu_anonymous:{
@@ -83,15 +89,6 @@ drupalgap.settings.blocks.easystreet3 = {
         mode:'include',
       }
     }
-  },
-  sub_navigation:{
-    main_menu:{
-      roles:{
-        value:['administrator'],
-        mode:'include',
-      }
-    },
-    primary_local_tasks:{},
   },
   content:{
     main:{}
@@ -123,37 +120,9 @@ drupalgap.settings.menus['user_menu_authenticated'] = {
 };
 
 // Main Menu
-drupalgap.settings.menus['main_menu'] = {
-  links:[
-    {
-      title:'Content',
-      path:'node',
-      options:{
-        attributes:{
-          'data-icon':'star'
-        }
-      }
-    },
-    {
-      title:'Taxonomy',
-      path:'taxonomy/vocabularies',
-      options:{
-        attributes:{
-          'data-icon':'grid'
-        }
-      }
-    },
-    {
-      title:'Users',
-      path:'user-listing',
-      options:{
-        attributes:{
-          'data-icon':'info'
-        }
-      }
-    }
-  ]
-};
+/*drupalgap.settings.menus['main_menu'] = {
+  links:[]
+};*/
 
 /****************************************************|
  * Region Menu Links - http://drupalgap.org/node/173 |
