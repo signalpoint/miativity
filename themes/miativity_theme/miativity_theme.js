@@ -10,6 +10,12 @@ function miativity_theme_info() {
           "data-role":"header"
         }
       },
+      sub_header:{
+        attributes:{
+          "data-role":"header",
+          "data-theme":"e"
+        }
+      },
       navigation:{
         attributes:{
           "data-role":"navbar"

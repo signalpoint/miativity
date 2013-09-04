@@ -6,6 +6,10 @@ function miativity_block_info() {
     slogan:{
       delta:'slogan',
       module:'miativity'
+    },
+    controls:{
+      delta:'controls',
+      module:'miativity'
     }
   };
   return blocks;
@@ -19,7 +23,33 @@ function miativity_block_view(delta) {
   if (delta == 'slogan') {
     content = '<h4>My Creativity. Shared.</h4>';
   }
+  else if (delta == 'controls') {
+    var welcome = '&nbsp;';
+    if (drupalgap.user.uid != 0) {
+      welcome = drupalgap.user.name; 
+    }
+    content = '<h4>' + welcome + '</h4>';
+  }
   return content;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function miativity_form_alter(form, form_state, form_id) {
+  try {
+    if (form_id == 'node_edit' && form.elements.type.default_value == 'art') {
+      // The site is using Automatic node titles, disable access to the default
+      // title field and make it optional.
+      form.elements.title.access = false;
+      form.elements.title.required = false;
+      // Disable access to other fields not needed.
+      form.elements.field_contest_entry.access = false;
+      form.elements.field_place_finish.access = false;
+      form.elements.field_addthis.access = false;
+    }
+  }
+  catch (error) { drupalgap_error(error); }
 }
 
 /**
@@ -81,12 +111,6 @@ function miativity_public_gallery_page() {
 
 function miativity_my_gallery_page() {
   var content = {
-    create_content:{
-      theme:'button_link',
-      text:'Create content',
-      path:'node/add',
-      attributes:{'data-icon':'add'}
-    },
     gallery_listing:{
       theme:'jqm_item_list',
       title:'Gallery List',

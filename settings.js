@@ -25,10 +25,11 @@ drupalgap.settings.clean_urls = false; // Setting to false is recommended.
  *************/
 
 // App Title
-drupalgap.settings.title = 'DrupalGap';
+drupalgap.settings.title = 'Miativity';
  
 // App Front Page
 drupalgap.settings.front = 'home';
+//drupalgap.settings.front = 'node/add/art';
 
 // Theme
 drupalgap.settings.theme = 'miativity_theme';
@@ -52,7 +53,7 @@ drupalgap.settings.loading = {
 
 // Contributed Modules - www/app/modules
 drupalgap.modules.contrib = [
-  /*{name:'example'},*/
+  {name:'date'},
 ];
 
 // Custom Modules - www/app/modules/custom
@@ -68,13 +69,10 @@ drupalgap.settings.blocks = {};
 // Miativity Theme Blocks
 drupalgap.settings.blocks.miativity_theme = {
   header:{
-    header:{},
-    slogan:{
-      pages:{
-        value:[''],
-        mode:'include'
-      }
-    }
+    title:{}
+  },
+  sub_header:{
+    controls:{}
   },
   navigation:{
     user_menu_anonymous:{
@@ -94,7 +92,12 @@ drupalgap.settings.blocks.miativity_theme = {
     main:{}
   },
   footer:{
-    powered_by:{}
+   slogan:{
+      pages:{
+        value:[''],
+        mode:'include'
+      }
+    }
   }
 };
 
@@ -163,6 +166,34 @@ drupalgap.settings.menus.regions['header'] = {
       }
     }
   ]
+};
+
+// Sub Header Region Links
+drupalgap.settings.menus.regions['sub_header'] = {
+  links:[
+    /* Create Art Button */
+    {
+      title:'Art',
+      path:'node/add/art',
+      options:{
+        attributes:{
+          "data-icon":"add",
+          "class":"ui-btn-right"
+        }
+      },
+      pages:{
+        value:['my_gallery'],
+        mode:'include'
+      }
+    }
+  ]
+};
+
+/*********|
+ * Camera |
+ **********/
+drupalgap.settings.camera = {
+  quality:75
 };
 
 /**************|
