@@ -86,6 +86,18 @@ function miativity_home_page() {
     };  
   }
   else { // Authenticated users.
+    /*content.create_content = {
+      theme:'button_link',
+      text:'Create content',
+      path:'node/add',
+      attributes:{'data-icon':'add'}
+    };*/
+    content.upload_art = {
+      theme:'button_link',
+      text:'Upload Art',
+      path:'node/add/art',
+      attributes:{'data-icon':'add'}
+    };
     content.my_gallery = {
       theme:'button_link',
       text:'My Gallery',
