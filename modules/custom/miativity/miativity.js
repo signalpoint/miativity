@@ -1,4 +1,16 @@
 /**
+ * Implements hook_install().
+ */
+function miativity_install() {
+  try {
+    var css_file_path =
+      drupalgap_get_path('module', 'miativity') + '/miativity.css';
+    drupalgap_add_css(css_file_path);
+  }
+  catch (error) { console.log('miativity_install - ' + error); }
+}
+
+/**
  * Implements hook_block_info().
  */
 function miativity_block_info() {
@@ -21,12 +33,16 @@ function miativity_block_info() {
 function miativity_block_view(delta) {
   var content = '';
   if (delta == 'slogan') {
-    content = '<h4>My Creativity. Shared.</h4>';
+    var title = 'My Creativity. Shared.';
+    if (drupalgap_path_get() != drupalgap.settings.front) {
+      title = 'Miativity';
+    }
+    content = '<h4>' + title + '</h4>';
   }
   else if (delta == 'controls') {
     var welcome = '&nbsp;';
-    if (drupalgap.user.uid != 0) {
-      welcome = drupalgap.user.name; 
+    if (Drupal.user.uid != 0) {
+      welcome = Drupal.user.name; 
     }
     content = '<h4>' + welcome + '</h4>';
   }
@@ -63,7 +79,8 @@ function miativity_menu() {
     },
     public_gallery:{
       title:'Public Gallery',
-      page_callback:'miativity_public_gallery_page'
+      page_callback:'miativity_public_gallery_page',
+      pageshow: 'miativity_public_gallery_pageshow'
     },
     my_gallery:{
       title:'My Gallery',
@@ -80,9 +97,17 @@ function miativity_menu() {
 
 function miativity_home_page() {
   var content = {};
-  if (drupalgap.user.uid == 0) { // Anonymous users.
+  if (Drupal.user.uid == 0) { // Anonymous users.
+    var logo_path = drupalgap_get_path('module', 'miativity') +
+      '/images/art-owl-trans-color.png';
+    var logo = theme('image', {
+      path: logo_path
+    });
+    content.logo = {
+      markup: '<center>' + logo + '</center>'
+    };
     content.intro = {
-      markup:'<p>Share your art in a gallery, create art collections, and more!</p>'
+      markup:'<p style="text-align: center;">Share your art in a gallery, create art collections, and more!</p>'
     };  
   }
   else { // Authenticated users.
@@ -117,8 +142,122 @@ function miativity_home_page() {
   return content;
 }
 
+var miativity_public_gallery_page_number = 0;
 function miativity_public_gallery_page() {
-  return 'gallery!';
+  try {
+    var onclick = "miativity_public_gallery_pager_click(this)";
+    var pager_prev =
+      l('&laquo;', null, {
+          attributes: {
+            'class': 'pager pager_prev',
+            'onclick': onclick
+          }
+        }
+      );
+    var pager_next =
+      l('&raquo;', null, {
+          attributes: {
+            'class': 'pager pager_next',
+            'onclick': onclick
+          }
+        }
+      );
+    var content = {
+      public_gallery_container: {
+        markup: '<div id="public_gallery_container">' +
+          '<h2></h2>' +
+          pager_prev +
+          '<img src="" />' +
+          pager_next +
+        '</div>'
+      }
+    };
+    return content;
+  }
+  catch (error) { console.log('miativity_public_gallery_page - ' + error); }
+}
+
+/**
+ *
+ */
+function miativity_public_gallery_pageshow() {
+  try {
+    var path = 'drupalgap/public-gallery';
+    if (miativity_public_gallery_page_number != 0) {
+      path += '&page=' + miativity_public_gallery_page_number;
+    }
+    views_datasource_get_view_result(path, {
+        success: function(result) {
+          if (result.nodes.length == 0) { return; }
+          var node = result.nodes[0].node;
+          miativity_public_gallery_render_art(node);
+        }
+    });
+  }
+  catch (error) { console.log('miativity_public_gallery_pageshow - ' + error); }
+}
+
+
+/**
+ *
+ */
+function miativity_public_gallery_render_art(node) {
+  try {
+    $('#public_gallery_container h2').html(node.field_art_title);
+    $('#public_gallery_container img').attr('src', node.field_art_image);
+  }
+  catch (error) {
+    console.log('miativity_public_gallery_render_art - ' + error);
+  }
+}
+
+/**
+ *
+ */
+function miativity_public_gallery_pager_click(pager) {
+  try {
+    if ($(pager).hasClass('pager_prev')) {
+      alert('prev');
+    }
+    else {
+      alert('next');
+    }
+  }
+  catch (error) {
+    console.log('miativity_public_gallery_pager_click - ' + error);
+  }
+}
+
+/**
+ *
+ */
+function miativity_public_gallery_pager_click(pager) {
+  try {
+    if ($(pager).hasClass('pager_prev')) {
+      miativity_public_gallery_page_change(-1);
+    }
+    else {
+      miativity_public_gallery_page_change(1);
+    }
+  }
+  catch (error) {
+    console.log('miativity_public_gallery_pager_click - ' + error);
+  }
+}
+
+/**
+ *
+ */
+function miativity_public_gallery_page_change(direction) {
+  try {
+    var page = miativity_public_gallery_page_number + direction;
+    if (page < 0) { return; }
+    miativity_public_gallery_page_number += direction;
+    miativity_public_gallery_pageshow();
+  }
+  catch (error) {
+    console.log('miativity_public_gallery_page_change - ' + error);
+  }
 }
 
 function miativity_my_gallery_page() {
@@ -135,7 +274,7 @@ function miativity_my_gallery_page() {
 
 function miativity_my_gallery_pageshow() {
   drupalgap.views_datasource.call({
-    path:'drupalgap/gallery/' + drupalgap.user.uid,
+    path:'drupalgap/gallery/' + Drupal.user.uid,
     success:function(data){
       if (data.nodes.length > 0) {
         var items = [];
