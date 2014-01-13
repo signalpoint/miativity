@@ -6,7 +6,7 @@ drupalgap.settings = {};
  ***************/
  
 // Site Path
-drupalgap.settings.site_path = 'https://dev-miativity.gotpantheon.com/'; // e.g. http://www.example.com
+drupalgap.settings.site_path = 'https://www.miativity.com'; // e.g. http://www.example.com
 
 // Base Path
 drupalgap.settings.base_path = '/';
