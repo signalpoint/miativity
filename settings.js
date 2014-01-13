@@ -1,44 +1,54 @@
+window.localStorage.clear();
+
 /* Specify DrupalGap Mobile Application Settings Here */
-drupalgap.settings = {};
 
-/***************|
- * Drupal Paths |
- ***************/
+/****************************************|
+ * Drupal Settings (provided by jDrupal) |
+ ****************************************/
  
-// Site Path
-drupalgap.settings.site_path = 'https://www.miativity.com'; // e.g. http://www.example.com
-
-// Base Path
-drupalgap.settings.base_path = '/';
+/* Drupal Paths */
+ 
+// Site Path (do not use a trailing slash)
+Drupal.settings.site_path = 'https://www.miativity.com'; // e.g. http://www.example.com
 
 // Default Services Endpoint Path
-drupalgap.settings.default_services_endpoint = 'drupalgap';
+Drupal.settings.endpoint = 'drupalgap';
 
 // Public Files Directory Path
-drupalgap.settings.file_public_path = 'sites/default/files';
+Drupal.settings.file_public_path = 'sites/default/files';
 
-// Clean URLs (optional)
-drupalgap.settings.clean_urls = false; // Setting to false is recommended.
+// The Default Language Code
+Drupal.settings.language_default = 'und';
 
-/*************|
- * Appearance |
- *************/
+/* Drupal Caching */
+
+// Set to true to enable entity local storage caching.
+Drupal.settings.cache.entity.enabled = true;
+
+// Number of seconds before cached copy of entity expires. Set to 0 to cache
+// forever, set to 60 for one minute, etc.
+Drupal.settings.cache.entity.expiration = 3600;
+
+/*********************|
+ * DrupalGap Settings |
+ *********************/
+
+/***********************|
+ * DrupalGap Appearance |
+ ***********************/
 
 // App Title
 drupalgap.settings.title = 'Miativity';
  
 // App Front Page
 drupalgap.settings.front = 'home';
-//drupalgap.settings.front = 'node/add/art';
+//drupalgap.settings.front = 'public_gallery';
 
 // Theme
 drupalgap.settings.theme = 'miativity_theme';
 
 // Logo
 drupalgap.settings.logo = 'themes/easystreet3/images/drupalgap.jpg';
-
-// Language
-drupalgap.settings.language = 'und';
 
 // Loading Animation - http://view.jquerymobile.com/1.3.2/dist/demos/widgets/loader/
 drupalgap.settings.loading = {
@@ -52,14 +62,70 @@ drupalgap.settings.loading = {
  *****************************************/
 
 // Contributed Modules - www/app/modules
-drupalgap.modules.contrib = [
-  {name:'date'},
-];
+
+// E.g., these 2 lines will load the module at www/app/modules/example
+var date_contrib_module = module_object_template('date');
+Drupal.modules.contrib.date = date_contrib_module;
 
 // Custom Modules - www/app/modules/custom
-drupalgap.modules.custom = [
-  {name:'miativity'},
-];
+
+// E.g., these 2 lines will load the module at www/app/modules/custom/example
+var miativity_custom_module = module_object_template('miativity');
+Drupal.modules.custom.miativity = miativity_custom_module;
+
+/***************************************|
+ * Menus - http://drupalgap.org/node/85 |
+ ***************************************/
+drupalgap.settings.menus = {};
+
+// User Menu Anonymous
+drupalgap.settings.menus['user_menu_anonymous'] = {
+  links:[
+    {title:'Login','path':'user/login'},
+    {title:'Register','path':'user/register'}
+  ]
+};
+
+// User Menu Authenticated
+drupalgap.settings.menus['user_menu_authenticated'] = {
+  links:[
+    {title:'My Account','path':'user'},
+    {title:'Logout','path':'user/logout'}
+  ]
+};
+
+// Main Menu
+drupalgap.settings.menus['main_menu'] = {
+  links:[
+    {
+      title:'Content',
+      path:'node',
+      options:{
+        attributes:{
+          'data-icon':'star'
+        }
+      }
+    },
+    {
+      title:'Taxonomy',
+      path:'taxonomy/vocabularies',
+      options:{
+        attributes:{
+          'data-icon':'grid'
+        }
+      }
+    },
+    {
+      title:'Users',
+      path:'user-listing',
+      options:{
+        attributes:{
+          'data-icon':'info'
+        }
+      }
+    }
+  ]
+};
 
 /****************************************|
  * Blocks - http://drupalgap.org/node/83 |
@@ -93,39 +159,9 @@ drupalgap.settings.blocks.miativity_theme = {
   },
   footer:{
    slogan:{
-      pages:{
-        value:[''],
-        mode:'include'
-      }
-    }
+   }
   }
 };
-
-/***************************************|
- * Menus - http://drupalgap.org/node/85 |
- ***************************************/
-drupalgap.settings.menus = {};
-
-// User Menu Anonymous
-drupalgap.settings.menus['user_menu_anonymous'] = {
-  links:[
-    {title:'Login','path':'user/login'},
-    {title:'Register','path':'user/register'}
-  ]
-};
-
-// User Menu Authenticated
-drupalgap.settings.menus['user_menu_authenticated'] = {
-  links:[
-    {title:'My Account','path':'user'},
-    {title:'Logout','path':'user/logout'}
-  ]
-};
-
-// Main Menu
-/*drupalgap.settings.menus['main_menu'] = {
-  links:[]
-};*/
 
 /****************************************************|
  * Region Menu Links - http://drupalgap.org/node/173 |
@@ -201,14 +237,12 @@ drupalgap.settings.camera = {
  **************/
 
 // Debug
-drupalgap.settings.debug = false; /* Set to true to see console.log debug
-                                     information. Set to false when publishing
-                                     app! */
-
-// Debug Level
-drupalgap.settings.debug_level = 0; /* 0 = mild, just a little debugging
-                                       1 = medium
-                                       2 = spicy, lots of debugging */
+//   PhoneGap 3.0.0 and above note, you must install a plugin to see console
+//   log messages. See the 'Debug console' section here:
+//   http://docs.phonegap.com/en/edge/guide_cli_index.md.html#The%20Command-line%20Interface
+Drupal.settings.debug = false; /* Set to true to see console.log debug
+                                  information. Set to false when publishing
+                                  app! */
 
 /***********************|
  * Performance Settings |
@@ -217,12 +251,4 @@ drupalgap.settings.cache = {};
 
 // Theme Registry - Set to true to load the page.tpl.html contents from cache.
 drupalgap.settings.cache.theme_registry = true;
-
-// Entities - Allow entities retrieved from the Drupal server to be cached on
-//            the mobile device using local storage.
-drupalgap.settings.cache.entity = {
-  enabled:true,   /* Set to true to enable entity local storage caching. */
-  expiration:3600 /* Number of seconds before cached copy of entity expires. Set
-                     to 0 to cache forever, set to 60 for one minute, etc. */
-};
 
