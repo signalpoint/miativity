@@ -13,7 +13,7 @@ function miativity_theme_info() {
       sub_header:{
         attributes:{
           "data-role":"header",
-          "data-theme":"e"
+          "data-theme":"b"
         }
       },
       navigation:{
@@ -28,7 +28,8 @@ function miativity_theme_info() {
       },
       footer:{
         attributes:{
-          "data-role":"footer"
+          "data-role":"footer",
+          "data-theme":"c"
         }
       }
     }
