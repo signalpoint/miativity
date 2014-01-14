@@ -1,0 +1,8 @@
+.miativity_gallery_container {
+  text-align: center;
+}
+.miativity_gallery_container img {
+  margin: 0em 2em 0em 2em;
+  border: 1px solid black;
+}
+
