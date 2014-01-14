@@ -22,12 +22,14 @@ Drupal.settings.language_default = 'und';
 
 /* Drupal Caching */
 
-// Set to true to enable entity local storage caching.
+// Set to true to enable local storage caching.
 Drupal.settings.cache.entity.enabled = true;
+Drupal.settings.cache.views.enabled = true;
 
-// Number of seconds before cached copy of entity expires. Set to 0 to cache
-// forever, set to 60 for one minute, etc.
-Drupal.settings.cache.entity.expiration = 3600;
+// Number of seconds before cached copy expires. Set to 0 to cache forever, set
+// to 60 for one minute, etc.
+Drupal.settings.cache.entity.expiration = 1800;
+Drupal.settings.cache.views.expiration = 1800;
 
 /*********************|
  * DrupalGap Settings |
@@ -98,29 +100,29 @@ drupalgap.settings.menus['user_menu_authenticated'] = {
 drupalgap.settings.menus['main_menu'] = {
   links:[
     {
-      title:'Content',
-      path:'node',
+      title:'My Gallery',
+      path:'gallery/my',
       options:{
         attributes:{
-          'data-icon':'star'
+          'data-icon':'user'
         }
       }
     },
     {
-      title:'Taxonomy',
-      path:'taxonomy/vocabularies',
+      title:'Friends',
+      path:'gallery/friends',
       options:{
         attributes:{
-          'data-icon':'grid'
+          'data-icon':'cloud'
         }
       }
     },
     {
-      title:'Users',
-      path:'user-listing',
+      title:'Public',
+      path:'gallery/public',
       options:{
         attributes:{
-          'data-icon':'info'
+          'data-icon':'eye'
         }
       }
     }
@@ -147,12 +149,18 @@ drupalgap.settings.blocks.miativity_theme = {
         mode:'include',
       }
     },
-    user_menu_authenticated:{
+    main_menu:{
       roles:{
         value:['authenticated user'],
         mode:'include',
       }
-    }
+    },
+    /*user_menu_authenticated:{
+      roles:{
+        value:['authenticated user'],
+        mode:'include',
+      }
+    }*/
   },
   content:{
     main:{}
@@ -207,18 +215,17 @@ drupalgap.settings.menus.regions['header'] = {
 // Sub Header Region Links
 drupalgap.settings.menus.regions['sub_header'] = {
   links:[
-    /* Create Art Button */
     {
       title:'Art',
       path:'node/add/art',
       options:{
         attributes:{
-          "data-icon":"add",
+          "data-icon":"plus",
           "class":"ui-btn-right"
         }
       },
       pages:{
-        value:['my_gallery'],
+        value:['gallery/my'],
         mode:'include'
       }
     }
