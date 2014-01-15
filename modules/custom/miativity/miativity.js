@@ -80,9 +80,8 @@ function miativity_menu() {
     'gallery/%': {
       title:'Gallery',
       page_callback:'miativity_gallery_page',
-      pageshow: 'miativity_gallery_pageshow',
       page_arguments: [1]
-    },
+    }
   };
   return items;
 }
@@ -135,17 +134,10 @@ function miativity_gallery_page(gallery) {
   try {
     var content = {
       gallery: {
-        markup: '<input type="hidden" id="miativity_gallery" value=""/>'
-      },
-      pager: {
-        theme: 'pager',
-        path: miativity_gallery_path(gallery)
-      },
-      public_gallery_container: {
-        markup: '<div id="' + gallery + '_gallery_container" class="miativity_gallery_container">' +
-          '<h2></h2>' +
-          '<a class="gallery_original"><img src="" /></a>' +
-        '</div>'
+        theme: 'view',
+        path: miativity_gallery_path(gallery),
+        row_callback: 'miativity_gallery_page_row',
+        empty_callback: 'miativity_gallery_page_empty'
       }
     };
     return content;
@@ -153,32 +145,34 @@ function miativity_gallery_page(gallery) {
   catch (error) { console.log('miativity_gallery_page - ' + error); }
 }
 
-var miativity_gallery_page_numbers = {
-  public: 0,
-  friends: 0,
-  my: 0
-};
+/**
+ *
+ */
+function miativity_gallery_page_empty(variables) {
+  try {
+    console.log('miativity_gallery_page_empty');
+    dpm(variables);
+    return "Sorry, nothing found.";
+  }
+  catch (error) { console.log('miativity_gallery_page_empty - ' + error); }
+}
 
 /**
  *
  */
-function miativity_gallery_pageshow(gallery) {
+function miativity_gallery_page_row(row) {
   try {
-    var path = miativity_gallery_path(gallery);
-    if (miativity_gallery_page_numbers[gallery] != 0) {
-      path += '&page=' + miativity_gallery_page_numbers[gallery];
-    }
-    views_datasource_get_view_result(path, {
-        success: function(result) {
-          console.log(path);
-          dpm(result);
-          if (result.nodes.length == 0) { return; }
-          var node = result.nodes[0].node;
-          miativity_gallery_render_art(gallery, node);
-        }
+    var title = '<h2>' + row.field_art_title + '</h2>';
+    var image = theme('image', {
+        path: row.field_art_image
     });
+    var link = l(image, row.original, {
+      InAppBrowser: true
+    });
+    dpm(link);
+    return title + link;
   }
-  catch (error) { console.log('miativity_gallery_pageshow - ' + error); }
+  catch (error) { console.log('miativity_gallery_page_row - ' + error); }
 }
 
 /**
@@ -201,57 +195,5 @@ function miativity_gallery_path(gallery) {
     return path;
   }
   catch (error) { console.log('miativity_gallery_path - ' + error); }
-}
-
-/**
- *
- */
-function miativity_gallery_render_art(gallery, node) {
-  try {
-    $('#miativity_gallery').val(gallery);
-    var id = '#' + gallery + '_gallery_container';
-    $(id + ' h2').html(node.field_art_title);
-    $(id + ' img').attr('src', node.field_art_image);
-    var onclick =
-      'javascript:window.open("' + node.original  + '", "_blank", "location=yes");';
-    $(id + ' a.gallery_original').attr('onclick', onclick);
-  }
-  catch (error) {
-    console.log('miativity_gallery_render_art - ' + error);
-  }
-}
-
-/**
- *
- */
-function miativity_gallery_pager_click(pager) {
-  try {
-    var gallery = $('#miativity_gallery').val();
-    $(pager).removeClass('ui-btn-active');
-    if ($(pager).hasClass('pager_prev')) {
-      miativity_gallery_page_change(gallery, -1);
-    }
-    else {
-      miativity_gallery_page_change(gallery, 1);
-    }
-  }
-  catch (error) {
-    console.log('miativity_gallery_pager_click - ' + error);
-  }
-}
-
-/**
- *
- */
-function miativity_gallery_page_change(gallery, direction) {
-  try {
-    var page = miativity_gallery_page_numbers[gallery] + direction;
-    if (page < 0) { return; }
-    miativity_gallery_page_numbers[gallery] += direction;
-    miativity_gallery_pageshow(gallery);
-  }
-  catch (error) {
-    console.log('miativity_gallery_page_change - ' + error);
-  }
 }
 
