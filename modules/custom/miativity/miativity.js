@@ -137,7 +137,10 @@ function miativity_gallery_page(gallery) {
         theme: 'view',
         path: miativity_gallery_path(gallery),
         row_callback: 'miativity_gallery_page_row',
-        empty_callback: 'miativity_gallery_page_empty'
+        empty_callback: 'miativity_gallery_page_empty',
+        attributes: {
+          id: 'views-view-' + gallery
+        }
       }
     };
     return content;
@@ -148,11 +151,25 @@ function miativity_gallery_page(gallery) {
 /**
  *
  */
-function miativity_gallery_page_empty(variables) {
+function miativity_gallery_page_empty(view) {
   try {
-    console.log('miativity_gallery_page_empty');
-    dpm(variables);
-    return "Sorry, nothing found.";
+    var html = '<p>Sorry, no art was found!</p>';
+    if (view.name == 'gallery') {
+      html += theme('button_link', {
+          text: 'Add Art',
+          path: 'node/add/art'
+      });
+    }
+    switch (view.name) {
+      case 'gallery': // My Gallery
+      case 'friends': // Friends Gallery
+        html += theme('button_link', {
+            text: 'View Public Gallery',
+            path: 'gallery/public'
+        });
+        break;
+    }
+    return html;
   }
   catch (error) { console.log('miativity_gallery_page_empty - ' + error); }
 }
@@ -160,7 +177,7 @@ function miativity_gallery_page_empty(variables) {
 /**
  *
  */
-function miativity_gallery_page_row(row) {
+function miativity_gallery_page_row(view, row) {
   try {
     var title = '<h2>' + row.field_art_title + '</h2>';
     var image = theme('image', {
@@ -169,7 +186,6 @@ function miativity_gallery_page_row(row) {
     var link = l(image, row.original, {
       InAppBrowser: true
     });
-    dpm(link);
     return title + link;
   }
   catch (error) { console.log('miativity_gallery_page_row - ' + error); }
