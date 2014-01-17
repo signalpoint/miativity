@@ -63,6 +63,8 @@ function miativity_form_alter(form, form_state, form_id) {
       form.elements.field_contest_entry.access = false;
       form.elements.field_place_finish.access = false;
       form.elements.field_addthis.access = false;
+      // Redirect the node edit form submission to the front page.
+      form.action = drupalgap.settings.front;
     }
   }
   catch (error) { drupalgap_error(error); }
@@ -211,5 +213,22 @@ function miativity_gallery_path(gallery) {
     return path;
   }
   catch (error) { console.log('miativity_gallery_path - ' + error); }
+}
+
+/**
+ * Implements hook_services_request_postprocess_alter().
+ */
+function miativity_services_request_postprocess_alter(options, result) {
+  try {
+    // Remove the 'My Gallery' page from the DOM and the corresponding Views
+    // Datasource result from local storage.
+    if (options.service == 'node' && options.resource == 'create') {
+      drupalgap_remove_page_from_dom(drupalgap_get_page_id('gallery/my'));
+      window.localStorage.removeItem(miativity_gallery_path('my') + '&page=0');
+    }
+  }
+  catch (error) {
+    console.log('miativity_services_request_postprocess_alter - ' + error);
+  }
 }
 
