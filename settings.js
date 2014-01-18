@@ -205,6 +205,25 @@ drupalgap.settings.menus.regions['header'] = {
         mode:"exclude"
       }
     }
+    /* Add Art Button */
+    /*{
+      title:'Art',
+      path: 'node/add/art',
+      options:{
+        attributes:{
+          "data-icon":"plus",
+          "class":"ui-btn-right"
+        }
+      },
+      pages:{
+        value:['gallery/my'],
+        mode:"include"
+      },
+      roles:{
+        value:['authenticated user'],
+        mode:'include'
+      }
+    }*/
   ]
 };
 

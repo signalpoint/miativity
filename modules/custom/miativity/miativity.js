@@ -33,9 +33,9 @@ function miativity_block_info() {
 function miativity_block_view(delta) {
   var content = '';
   if (delta == 'slogan') {
-    var title = 'My Creativity. Shared.';
+    var title = 'My Creativity, Shared.';
     if (drupalgap_path_get() != drupalgap.settings.front) {
-      title = 'Miativity';
+      title = 'Miativity - ' + title;
     }
     content = '<h4>' + title + '</h4>';
   }
@@ -67,7 +67,26 @@ function miativity_form_alter(form, form_state, form_id) {
       form.elements.field_place_finish.access = false;
       form.elements.field_addthis.access = false;
       // Redirect the node edit form submission to the front page.
-      form.action = drupalgap.settings.front;
+      //form.action = drupalgap.settings.front;
+      form.action = 'gallery/my';
+    }
+    else if (form_id == 'user_login_form') {
+      form.suffix += '<p style="text-align: center;">' +
+        "Don't have an account? " +
+        theme('button_link', {
+            text: 'Create an Account',
+            path: 'user/register'
+        }) +
+      '</p>';
+    }
+    else if (form_id == 'user_register_form') {
+      form.suffix += '<p style="text-align: center;">' +
+        "Already have an account? " +
+        theme('button_link', {
+            text: 'Login to Account',
+            path: 'user/login'
+        }) +
+      '</p>';
     }
   }
   catch (error) { drupalgap_error(error); }
