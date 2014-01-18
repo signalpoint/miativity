@@ -41,9 +41,12 @@ function miativity_block_view(delta) {
   }
   else if (delta == 'controls') {
     var welcome = '&nbsp;';
-    if (Drupal.user.uid != 0) {
-      welcome = Drupal.user.name; 
+    if (drupalgap_path_get() == drupalgap.settings.front) {
+      welcome += 'Galleries';
     }
+    /*if (Drupal.user.uid != 0) {
+      welcome = Drupal.user.name; 
+    }*/
     content = '<h4>' + welcome + '</h4>';
   }
   return content;
@@ -102,28 +105,50 @@ function miativity_home_page() {
     content.intro = {
       markup:'<p style="text-align: center;">Share your art in a gallery, create art collections, and more!</p>'
     };
-    content.public_gallery = {
-      theme:'button_link',
-      text:'View Public Gallery',
-      path:'gallery/public',
-      attributes:{'data-icon':'eye'}
+    content.login = {
+      theme: 'button_link',
+      text: 'Login',
+      path: 'user/login',
+      options: {
+        attributes: {
+          'data-icon': 'lock'
+        }
+      }
+    };
+    content.join = {
+      theme: 'button_link',
+      text: 'Join',
+      path: 'user/register',
+      options: {
+        attributes: {
+          'data-theme': 'b',
+          'data-icon': 'plus'
+        }
+      }
     };
   }
   else { // Authenticated users.
+    content.welcome = {
+      markup: '<p style="text-align: center;">Hi, <strong>' + Drupal.user.name + '</strong></p>'
+    };
     content.upload_art = {
       theme:'button_link',
       text:'Upload Art',
       path:'node/add/art',
-      attributes:{'data-icon':'plus'}
+      attributes:{
+        'data-theme': 'b',
+        'data-icon':'plus'
+      }
     };
-  }
-  
-  if (Drupal.user.uid != 0) {
     content.logout = {
       theme: 'button_link',
       text: 'Logout',
       path: 'user/logout',
-      attributes: { 'data-icon': 'delete' }
+      options: {
+        attributes: {
+          'data-icon': 'delete'
+        }
+      }
     };
   }
   return content;
@@ -134,8 +159,63 @@ function miativity_home_page() {
  */
 function miativity_gallery_page(gallery) {
   try {
-    var content = {
-      gallery: {
+    var content = {};
+    if (Drupal.user.uid == 0) {
+      // Anonymous user...
+      if (gallery != 'public') {
+        var welcome_message = 'Login to share and view your art.';
+        if (gallery == 'friends') {
+          welcome_message = 'Login to see art from friends.'
+        }
+        content.welcome = {
+          markup: '<p style="text-align: center;">' + welcome_message + '</p>'
+        };
+        content.login = {
+          theme: 'button_link',
+          text: 'Login',
+          path: 'user/login',
+          options: {
+            attributes: {
+              'data-icon': 'lock'
+            }
+          }
+        };
+        content.join = {
+          theme: 'button_link',
+          text: 'Join',
+          path: 'user/register',
+          options: {
+            attributes: {
+              'data-theme': 'b',
+              'data-icon': 'plus'
+            }
+          }
+        };
+      }
+    }
+    else {
+      // AUthenticated user...
+      if (gallery == 'my') {
+        content.add_art = {
+          text: 'Upload Art',
+          path: 'node/add/art',
+          theme: 'button_link',
+          options: {
+            attributes: {
+              'data-icon': 'plus'
+            }
+          }
+        };
+      }
+    }
+    // Hide the gallery only when an anonymous user is looking at the
+    // 'my gallery' or 'friends' gallery pages.
+    var show_gallery = true;
+    if (Drupal.user.uid == 0 && (gallery == 'my' || gallery == 'friends')) {
+      show_gallery = false;
+    }
+    if (show_gallery) {
+      content.gallery = {
         theme: 'view',
         path: miativity_gallery_path(gallery),
         row_callback: 'miativity_gallery_page_row',
@@ -143,8 +223,8 @@ function miativity_gallery_page(gallery) {
         attributes: {
           id: 'views-view-' + gallery
         }
-      }
-    };
+      };
+    }
     return content;
   }
   catch (error) { console.log('miativity_gallery_page - ' + error); }
@@ -155,16 +235,13 @@ function miativity_gallery_page(gallery) {
  */
 function miativity_gallery_page_empty(view) {
   try {
-    var html = '<p>Sorry, no art was found!</p>';
-    if (view.name == 'gallery') {
-      html += theme('button_link', {
-          text: 'Add Art',
-          path: 'node/add/art'
-      });
-    }
+    var html = '';
     switch (view.name) {
       case 'gallery': // My Gallery
+        html += '<p>Sorry, no art was found!</p>';
+        break;
       case 'friends': // Friends Gallery
+        html += '<p>Sorry, no art from friends was found! Browse the public gallery for art.</p>';
         html += theme('button_link', {
             text: 'View Public Gallery',
             path: 'gallery/public'
