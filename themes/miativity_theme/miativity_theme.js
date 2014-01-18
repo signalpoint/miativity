@@ -29,7 +29,8 @@ function miativity_theme_info() {
       footer:{
         attributes:{
           "data-role":"footer",
-          "data-theme":"c"
+          "data-theme":"c",
+          'data-position': 'fixed'
         }
       }
     }
