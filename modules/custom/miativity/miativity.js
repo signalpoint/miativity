@@ -202,7 +202,8 @@ function miativity_gallery_page(gallery) {
           theme: 'button_link',
           options: {
             attributes: {
-              'data-icon': 'plus'
+              'data-icon': 'plus',
+              'data-theme': 'c'
             }
           }
         };
