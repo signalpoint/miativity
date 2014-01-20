@@ -33,7 +33,7 @@ function miativity_block_info() {
 function miativity_block_view(delta) {
   var content = '';
   if (delta == 'slogan') {
-    var title = 'My Creativity, Shared.';
+    var title = 'My Creativity. Shared.';
     if (drupalgap_path_get() != drupalgap.settings.front) {
       title = 'Miativity - ' + title;
     }
@@ -44,9 +44,6 @@ function miativity_block_view(delta) {
     if (drupalgap_path_get() == drupalgap.settings.front) {
       welcome += 'Galleries';
     }
-    /*if (Drupal.user.uid != 0) {
-      welcome = Drupal.user.name; 
-    }*/
     content = '<h4>' + welcome + '</h4>';
   }
   return content;
@@ -66,27 +63,22 @@ function miativity_form_alter(form, form_state, form_id) {
       form.elements.field_contest_entry.access = false;
       form.elements.field_place_finish.access = false;
       form.elements.field_addthis.access = false;
-      // Redirect the node edit form submission to the front page.
-      //form.action = drupalgap.settings.front;
+      // Redirect the node edit form submission to the user's gallery.
       form.action = 'gallery/my';
     }
     else if (form_id == 'user_login_form') {
-      form.suffix += '<p style="text-align: center;">' +
-        "Don't have an account? " +
+      form.suffix +=
         theme('button_link', {
             text: 'Create an Account',
             path: 'user/register'
-        }) +
-      '</p>';
+        });
     }
     else if (form_id == 'user_register_form') {
-      form.suffix += '<p style="text-align: center;">' +
-        "Already have an account? " +
+      form.suffix +=
         theme('button_link', {
-            text: 'Login to Account',
+            text: 'Login to Existing Account',
             path: 'user/login'
-        }) +
-      '</p>';
+        });
     }
   }
   catch (error) { drupalgap_error(error); }
@@ -145,6 +137,9 @@ function miativity_home_page() {
         }
       }
     };
+    content.website = {
+      markup: '<p style="text-align: center;">Or stop by <strong>miativity.com</strong> to learn more.</p>'
+    };
   }
   else { // Authenticated users.
     content.welcome = {
@@ -169,6 +164,9 @@ function miativity_home_page() {
         }
       }
     };
+    content.website = {
+      markup: '<p>Please visit <strong>miativity.com</strong> for more functionality like creating friends, collections, private messaging, and more.</p>'
+    };
   }
   return content;
 }
@@ -184,7 +182,7 @@ function miativity_gallery_page(gallery) {
       if (gallery != 'public') {
         var welcome_message = 'Login to share and view your art.';
         if (gallery == 'friends') {
-          welcome_message = 'Login to see art from friends.'
+          welcome_message = 'Sorry, no art from friends was found! You can make friend requests and send private messages at <strong>miativity.com</strong>'
         }
         content.welcome = {
           markup: '<p style="text-align: center;">' + welcome_message + '</p>'
@@ -261,7 +259,7 @@ function miativity_gallery_page_empty(view) {
         html += '<p>Sorry, no art was found!</p>';
         break;
       case 'friends': // Friends Gallery
-        html += '<p>Sorry, no art from friends was found! Browse the public gallery for art.</p>';
+        html += '<p>Sorry, no art from friends was found! You can make friend requests and send private messages at <strong>miativity.com</strong></p>';
         html += theme('button_link', {
             text: 'View Public Gallery',
             path: 'gallery/public'
@@ -279,13 +277,15 @@ function miativity_gallery_page_empty(view) {
 function miativity_gallery_page_row(view, row) {
   try {
     var title = '<h2>' + row.field_art_title + '</h2>';
+    var author = '';
+    if (row.field_country) { author = '<p>' + row.field_country + '</p>'; }
     var image = theme('image', {
         path: row.field_art_image
     });
     var link = l(image, row.original, {
       InAppBrowser: true
     });
-    return title + link;
+    return title + author + link;
   }
   catch (error) { console.log('miativity_gallery_page_row - ' + error); }
 }
@@ -315,12 +315,12 @@ function miativity_gallery_path(gallery) {
 /**
  * Implements hook_services_request_postprocess_alter().
  */
-function miativity_services_request_postprocess_alter(options, result) {
+function miativity_services_request_pre_postprocess_alter(options, result) {
   try {
     // Remove the 'My Gallery' page from the DOM and the corresponding Views
     // Datasource result from local storage.
     if (options.service == 'node' && options.resource == 'create') {
-      drupalgap_remove_page_from_dom(drupalgap_get_page_id('gallery/my'));
+      drupalgap_remove_page_from_dom(drupalgap_get_page_id('gallery/my'), { force: true });
       window.localStorage.removeItem(miativity_gallery_path('my') + '&page=0');
     }
   }
