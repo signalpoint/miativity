@@ -159,6 +159,7 @@ function miativity_home_page() {
       text: 'Logout',
       path: 'user/logout',
       options: {
+        transition: 'none',
         attributes: {
           'data-icon': 'delete'
         }
